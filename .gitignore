@@ -1,0 +1,60 @@
+# ----------------------------------------------------------------------
+# 1. Byte-compiled / temporary files
+# ----------------------------------------------------------------------
+*.pyc
+__pycache__/
+*.$py.class
+.ipynb_checkpoints
+
+# ----------------------------------------------------------------------
+# 2. Virtual Environment
+# ----------------------------------------------------------------------
+# The standard virtual environment folder
+venv/
+.venv/
+env/
+.env/
+
+# For conda environments
+.conda/
+.mypy_cache/
+.pytest_cache/
+
+# ----------------------------------------------------------------------
+# 3. Dependencies and Packaging
+# ----------------------------------------------------------------------
+# Python packaging/build files
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Pip-tools (for pinning dependencies)
+requirements.txt.bak
+requirements-dev.txt.bak
+
+# ----------------------------------------------------------------------
+# 4. Logs and Databases
+# ----------------------------------------------------------------------
+# Log files
+*.log
+*.sqlite
+*.db
+
+# ----------------------------------------------------------------------
+# 5. OS and Editor Files
+# ----------------------------------------------------------------------
+.DS_Store
+.vscode/
+.idea/
+Thumbs.db
+
+# ----------------------------------------------------------------------
+# 6. Sensitive Data and Configs
+# ----------------------------------------------------------------------
+# Environment variable files (always ignore these!)
+.env
+.flaskenv
+
+# Jupyter Notebooks and other output files
+*.ipynb_checkpoints

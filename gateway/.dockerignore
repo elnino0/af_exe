@@ -1,0 +1,18 @@
+# Ignore the virtual environment directory (common name)
+venv/
+
+# Ignore the environment configuration file
+.env
+
+# Other common Python ignores:
+
+# Cache directories
+__pycache__/
+*.pyc
+*.o
+*.so
+
+# Editor/OS temporary files
+*~
+*.swp
+.DS_Store

@@ -1,0 +1,28 @@
+
+
+
+version: '3.8'
+
+services:
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: gateway
+    ports:
+      - "8000:8000"
+    environment:
+      XYZ_API_KEY: me a key good good
+      XYZ_API_URL: http://mock:5000/scan
+
+  mock:
+    build:
+      context: ./xyzMock
+      dockerfile: Dockerfile
+    container_name: mock
+    ports:
+      - "5000:5000"
+networks:
+  default:
+    driver: bridge

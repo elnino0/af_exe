@@ -1,0 +1,49 @@
+[flake8]
+# 1. Core Configuration: Rules and Scope
+# -------------------------------------
+
+# A comma-separated list of error codes to ignore globally.
+# Examples:
+# E501: Line too long (often ignored or the max-line-length is adjusted)
+# W503: Line break before binary operator (PEP 8 recommends breaking AFTER)
+# F401: Unused import (sometimes necessary for type-checking or future use)
+ignore = E501, W503, F401
+
+# The maximum allowed line length. Flake8 defaults to 79.
+max-line-length = 100
+
+# The maximum allowed McCabe complexity score for functions/methods.
+# Flake8 defaults to 10. A lower number means simpler functions.
+max-complexity = 12
+
+# 2. File and Directory Exclusion
+# -------------------------------
+
+# A comma-separated list of files or directories to exclude from checking.
+# This prevents Flake8 from processing automatically generated or third-party code.
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    build,
+    dist,
+    docs,
+    */migrations/*,
+    settings.py  # Example: Exclude a specific file
+
+# 3. Third-Party Plugin Configuration (Optional)
+# ----------------------------------------------
+
+# If you use popular plugins, you can configure them here.
+
+# Example: flake8-docstrings (D)
+# select = D # Uncomment to enforce docstring checks (D100 to D417)
+
+# Example: flake8-bugbear (B)
+# bugbear-max-cognitive-complexity = 12
+
+# Example: Black-compatible settings
+# Setting a line length of 88 is common when using the 'Black' formatter.
+# max-line-length = 88
+# extend-ignore = E203 # E203 conflicts with Black's spacing rules

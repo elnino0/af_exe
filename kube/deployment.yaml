@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+  labels:
+    app: gateway-service
+spec:
+  # Configure 2 replicas
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gateway-service
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+    spec:
+      containers:
+      - name: gateway-container
+        image: localhost:5000/gateway:prod # Replace with your actual image
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        
+        # Mount configuration from ConfigMap and Secret as environment variables
+        env:
+        # Configuration from ConfigMap
+        - name: XYZ_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: gateway-config
+              key: XYZ_API_URL
+              
+        # Configuration from Secret
+        - name: XYZ_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gateway-secret
+              key: XYZ_API_KEY
+              
+        # Resource requests and limits
+        resources:
+          requests:
+            memory: "64Mi" # Minimum guaranteed memory
+            cpu: "250m"   # Minimum guaranteed CPU (25% of a core)
+          limits:
+            memory: "256Mi" # Maximum memory allowed
+            cpu: "500m"   # Maximum CPU allowed (50% of a core)
+            
+        # Liveness Probe (checks if the container is still running/healthy)
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 6
+          
+        # Readiness Probe (checks if the container is ready to serve traffic)
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3

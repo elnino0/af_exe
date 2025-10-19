@@ -12,6 +12,10 @@ default: up
 # BASIC LIFECYCLE COMMANDS
 # ------------------------------------
 
+.PHONY: build_docker
+build_docker:
+	docker build -t basebuilder:latest .
+
 .PHONY: up
 # Starts the services in detached mode (in the background)
 up:
@@ -28,7 +32,7 @@ down:
 # Builds or rebuilds all services' images
 build:
 	@echo "Building application images..."
-	docker compose -f $(COMPOSE_FILE) build --no-
+	docker compose -f $(COMPOSE_FILE) build --no-cache 
 
 # ------------------------------------
 # kubernetes COMMANDS
@@ -36,6 +40,10 @@ build:
 .PHONY: docker_run_registry
 docker_run_registry:
 	docker run -d -p 5000:5000 --name registry registry:2
+
+docker_stop_registry:
+	docker stop registry || true
+	docker rm registry || true
 
 
 .PHONY: kube_image
@@ -55,7 +63,11 @@ kube_apply:
 
 .PHONY: kube_port_forward
 kube_port_forward:
-	kubectl port-forward svc/gateway-service-clusterip 8000:80
+	kubectl port-forward service/gateway-service-clusterip 8000:80
+
+.PHONY: wait_for_kube
+wait_for_kube:
+	kubectl wait --for=condition=Ready pods -l app==gateway-service --timeout=30s
 
 
 
@@ -74,15 +86,14 @@ shell:
 	@echo "Opening shell in the $(APP_SERVICE) container..."
 	docker compose -f $(COMPOSE_FILE) exec $(APP_SERVICE) /bin/bash
 
-.PHONY: lint
-# Runs a custom command (e.g., linting) inside the main application container
-lint:
-	@echo "Running linting tools..."
-	docker compose -f $(COMPOSE_FILE) exec $(APP_SERVICE) flake8 /app
-
 # --- The Consolidated Command ---
 
 # The 'run' target depends on 'down' and 'build' before running 'up'.
 # When you run 'make run', Make executes the prerequisite targets in order: down -> build -> up.
 run: down build up
 	@echo "⚡️ Service stack is up and running. Use 'make logs' to view output"
+
+init: build_docker build docker_stop_registry docker_run_registry build_kube_image
+
+.PHONY: run_kube
+run_kube: kube_apply wait_for_kube kube_port_forward

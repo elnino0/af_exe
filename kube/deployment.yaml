@@ -49,20 +49,15 @@ spec:
             
         # Liveness Probe (checks if the container is still running/healthy)
         livenessProbe:
-          httpGet:
-            path: /health/live
-            port: 8000
+          tcpSocket:
+            port: 8000 # The port your main application is listening on
           initialDelaySeconds: 15
           periodSeconds: 20
-          timeoutSeconds: 5
-          failureThreshold: 6
+
           
         # Readiness Probe (checks if the container is ready to serve traffic)
         readinessProbe:
-          httpGet:
-            path: /health/ready
-            port: 8000
+          tcpSocket:
+            port: 8000 # Same port as the application's service port
           initialDelaySeconds: 5
           periodSeconds: 10
-          timeoutSeconds: 3
-          failureThreshold: 3

@@ -14,7 +14,7 @@ services:
       - "8000:8000"
     environment:
       XYZ_API_KEY: me a key good good
-      XYZ_API_URL: http://mock:5000/scan
+      XYZ_API_URL: http://mock:5001/scan
 
   mock:
     build:
@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
     container_name: mock
     ports:
-      - "5000:5000"
+      - "5001:5001"
 networks:
   default:
     driver: bridge

@@ -1,0 +1,146 @@
+Gateway Service | ActiveFence Home Exercise 🚀
+
+This project implements a FastAPI gateway API that serves as a frontend to an external, third-party scanning service (mocked by a separate Flask application).
+
+The core idea is to demonstrate a robust, containerized application with separate configurations for local development and Kubernetes production deployment.
+
+Table of Contents
+
+    Features
+
+    Getting Started (Local Development)
+
+        Prerequisites
+
+        Installation
+
+    Configuration
+
+    Usage
+
+    Deployment to Kubernetes
+
+    Design Decisions
+
+    License
+
+Features
+
+    FastAPI Backend: High-performance asynchronous API acting as a proxy/gateway.
+
+    Flask Mock Service: A separate service to mock the external XYZ Scan Endpoint.
+
+    Containerized Development: Uses Docker Compose for easy setup of both services.
+
+    Build Automation: Uses a Makefile for common operational tasks (build, run, deploy).
+
+    Production Ready: Includes necessary Kubernetes YAML manifests.
+
+Getting Started (Local Development)
+
+Follow these steps to run the application using Docker Compose.
+
+Prerequisites
+
+You need the following installed on your local machine:
+
+    Docker
+
+    Docker Compose (V2)
+
+    Python 3.12+ (Optional, if running locally without Docker)
+
+    kubectl (Only for Kubernetes deployment)
+
+Installation
+
+    Clone the Repository:
+    Bash
+
+git clone <repository-url>
+cd <project-directory>
+
+Set Up Environment Variables: Create the .env file and populate it with the necessary variables (which Docker Compose will automatically use):
+Bash
+
+touch .env
+echo "XYZ_API_KEY=your_dummy_key" >> .env
+echo "XYZ_API_URL=http://xyz-mock:5000/scan" >> .env
+
+Note: The XYZ_API_URL above is the internal Docker Compose network address for the mock service.
+
+Run Services via Makefile: Use the Makefile targets to initialize the workspace and start the services.
+Bash
+
+    # Initializes the workspace (e.g., builds base images, cleanups)
+    make init
+
+    # Builds and runs all services using docker-compose in detached mode
+    make run
+
+The Gateway API will be accessible on your host machine at http://localhost:8000.
+
+Configuration
+
+The application reads configuration from the .env file for local and Docker Compose environments.
+Variable	Required?	Description
+XYZ_API_KEY	Yes	Your secret API key required by the external scanning service.
+XYZ_API_URL	Yes	The full URL for the external scanning service endpoint.
+
+Usage
+
+The Gateway API exposes a file upload endpoint that proxies the request to the mocked XYZ service.
+
+The application is accessible at http://localhost:8000.
+
+Example API Request (Upload File)
+
+Use curl to POST a file to the Gateway service. The API key for the external service is handled internally by the Gateway.
+Bash
+
+curl -X POST \
+  -H "Authorization: Bearer YOUR_GATEWAY_AUTH_TOKEN" \
+  -F "file=@/path/to/your/local/file.txt" \
+  http://localhost:8000/upload
+
+Replace YOUR_GATEWAY_AUTH_TOKEN with the actual token/key the Gateway expects for authorization.
+
+Deployment to Kubernetes
+
+The project includes YAML manifests for production deployment, utilizing a streamlined Makefile flow.
+
+    Configure kubectl: Ensure your kubectl is authenticated and configured to the target Kubernetes cluster/environment.
+
+    Build and Push Images: The init target is designed to build and push the image to the local Docker registry used by Minikube/Kind.
+    Bash
+
+make init
+
+Configuration: Update the Kubernetes manifests:
+
+    Set non-sensitive variables in configmap.yaml.
+
+    Set sensitive variables (like XYZ_API_KEY) in secret.yaml.
+
+Deploy: Run the deployment target. This applies the configurations and the main deployment manifests.
+Bash
+
+    make run_kube
+
+Design Decisions
+
+FastAPI vs. Flask
+
+    FastAPI was chosen for its performance, native asynchronous support, and the automatic generation of OpenAPI documentation (Swagger/ReDoc).
+
+    The architecture is simpler and more robust, particularly for the proxy/gateway pattern, as implementing new endpoints and ensuring data validation is easier due to the tight integration with Pydantic.
+
+Docker Strategy
+
+    Base Image Separation: A multi-stage build or dedicated base image was used to install large, static dependencies (like OS packages) first. This allows for faster subsequent builds and a more stable base layer, reducing build times during iterative development.
+
+Makefile Usage
+
+    The Makefile simplifies complex command sequences (like Docker Compose up or Kubernetes deployment steps) into single, memorable commands (make run, make init).
+
+    While a Shell Script (.sh) might offer more complex scripting capabilities, the Makefile provides a clean, dependency-oriented structure ideal for development automation.

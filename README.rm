@@ -101,7 +101,7 @@ Bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_GATEWAY_AUTH_TOKEN" \
   -F "file=@/path/to/your/local/file.txt" \
-  http://localhost:8000/scan
+  http://localhost:8000/fontxyz/scan
 
 Replace YOUR_GATEWAY_AUTH_TOKEN with the actual token/key the Gateway expects for authorization.
 

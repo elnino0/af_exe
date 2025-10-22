@@ -1,4 +1,4 @@
-Gateway Service | ActiveFence Home Exercise 🚀
+Gateway Service | disclosed compeny Exercise 🚀
 
 This project implements a FastAPI gateway API that serves as a frontend to an external, third-party scanning service (mocked by a separate Flask application).
 
